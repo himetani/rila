@@ -1,12 +1,12 @@
-package main
+package pocket
 
 import (
 	"os"
 	"testing"
 )
 
-func TestPocketList(t *testing.T) {
-	pocket := newPocket()
+func ___TestPocketList(t *testing.T) {
+	pocket := NewPocket()
 	key := os.Getenv("CONSUMER_KEY")
 	token := os.Getenv("ACCESS_TOKEN")
 

@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"path"
 
+	"github.com/himetani/rila/pocket"
 	"github.com/labstack/echo"
 )
 
@@ -20,7 +21,7 @@ func auth(c echo.Context) error {
 		return c.Redirect(http.StatusFound, "/?msg=consumerKey is not specified")
 	}
 
-	pocket := newPocket()
+	pocket := pocket.NewPocket()
 
 	host := "http://" + c.Request().Host
 
@@ -49,7 +50,7 @@ func redirect(c echo.Context) error {
 		return errors.New("consumer_key is empty")
 	}
 
-	pocket := newPocket()
+	pocket := pocket.NewPocket()
 	username, token, err := pocket.GetAccessToken(consumerKey, requestCodes.Get(consumerKey))
 	if err != nil {
 		return err

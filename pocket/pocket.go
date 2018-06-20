@@ -1,4 +1,4 @@
-package main
+package pocket
 
 import (
 	"bytes"
@@ -23,7 +23,7 @@ type pocket struct {
 	c *http.Client
 }
 
-func newPocket() *pocket {
+func NewPocket() *pocket {
 	return &pocket{
 		c: &http.Client{},
 	}
