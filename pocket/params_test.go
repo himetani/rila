@@ -2,18 +2,18 @@ package pocket
 
 import (
 	"io/ioutil"
-	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
 func TestString(t *testing.T) {
-	bytes, err := ioutil.ReadFile(filepath.Join(os.Getenv("GOPATH"), "src", "github.com", "himetani", "rila", "pocket", "testdata", "params.json"))
+	bytes, err := ioutil.ReadFile(filepath.Join("testdata", "params.json"))
 	if err != nil {
 		t.Error("Unexpected error happend")
 	}
 
-	expected := string(bytes)
+	expected := strings.TrimSuffix(string(bytes), "\n")
 
 	params := &Params{ConsumerKey: "consumer_key", AccessToken: "access_token"}
 	actual := params.String()

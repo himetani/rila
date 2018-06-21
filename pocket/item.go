@@ -1,7 +1,5 @@
 package pocket
 
-import "time"
-
 type State string
 
 const (
@@ -43,10 +41,10 @@ const (
 )
 
 type RetrieveResult struct {
-	List     map[string]Item
-	Status   int
-	Complete int
-	Since    int
+	List     map[string]Item `json:"list"`
+	Status   int             `json:"status"`
+	Complete int             `json:"complete"`
+	Since    int             `json:"since"`
 }
 
 type ItemStatus int
@@ -87,9 +85,9 @@ type Item struct {
 	Videos  map[string]map[string]interface{}
 
 	// Fields that are not documented but exist
-	SortId        int       `json:"sort_id"`
-	TimeAdded     time.Time `json:"time_added"`
-	TimeUpdated   time.Time `json:"time_updated"`
-	TimeRead      time.Time `json:"time_read"`
-	TimeFavorited time.Time `json:"time_favorited"`
+	SortId        int    `json:"sort_id"`
+	TimeAdded     string `json:"time_added"`
+	TimeUpdated   string `json:"time_updated"`
+	TimeRead      string `json:"time_read"`
+	TimeFavorited string `json:"time_favorited"`
 }

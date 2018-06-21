@@ -3,6 +3,7 @@ package pocket
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -73,7 +74,6 @@ func (p *pocket) GetRequestCode(key, redirect string) (string, error) {
 
 func (p *pocket) GetAccessToken(key, code string) (string, string, error) {
 	jsonstr := "{\"consumer_key\": \"" + key + "\", \"code\": \"" + code + "\"}"
-	log.Printf("Info: %s", jsonstr)
 
 	req, err := p.newReq("v3/oauth/authorize", jsonstr)
 	if err != nil {
@@ -128,4 +128,55 @@ func (p *pocket) GetList(key, token string) error {
 		return err
 	}
 	return nil
+}
+
+func (p *pocket) GetOldestItem(key, token string, idx int) (*Item, error) {
+	if idx < 0 {
+		return nil, errors.New("idx should be bigger than zero")
+	}
+
+	params := &Params{
+		ConsumerKey: key,
+		AccessToken: token,
+		ContentType: "article",
+		Sort:        "oldest",
+		Count:       1,
+	}
+
+	req, err := p.newReq("v3/get", params.String())
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := p.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Status code was not 200. got=%d", resp.StatusCode)
+	}
+
+	var r io.Reader = resp.Body
+	//r = io.TeeReader(r, os.Stderr)
+
+	b := RetrieveResult{}
+	if err := json.NewDecoder(r).Decode(&b); err != nil {
+		return nil, err
+	}
+
+	length := len(b.List)
+
+	if idx > length-1 {
+		return nil, fmt.Errorf("item length should be bigger than idx but not. len=%d", length)
+	}
+
+	arr := make([]Item, length)
+	for _, item := range b.List {
+		arr[item.SortId] = item
+	}
+
+	return &arr[idx], nil
 }
